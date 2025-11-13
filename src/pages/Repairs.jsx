@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ucRepair from "../assets/ucrepairBill.jpg";
 import PKRepair from "../assets/PkrepairBill.jpg";
 import { RxCross1 } from "react-icons/rx";
@@ -17,12 +17,9 @@ const Repairs = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [finalAmount, setFinalAmount] = useState(0);
-  const [reductions, setReductions] = useState(0);
-  const [newFinalAmount, setNewFinalAmount] = useState(0);
-  const [showError, setShowError] = useState(false);
   const [items, setItems] = useState([{ item: "", quantity: "", price: "" }]);
   const [interestAmount, setInterestAmount] = useState("");
+  const [errors, setErrors] = useState({});
 
   const HeaderTitles = [
     { name: "", width: "3%" },
@@ -35,21 +32,20 @@ const Repairs = () => {
     { name: "Total", width: "12%" },
   ];
 
-
   const repairBill = [
     { id: 1, img: ucRepair },
     { id: 2, img: PKRepair },
   ];
 
-  // UC Bill calculations
+  // UC Bill Calculations
   const calcPlatformPrice = Number(ucPlatformPrice) || 0;
   const ucgstAmount = (calcPlatformPrice * 0.18).toFixed(2);
   const uctotalPlatformFee = (calcPlatformPrice + calcPlatformPrice * 0.18).toFixed(2);
   const partnerInvoice = Number(ucprice) || 0;
   const ucigstAmount = (partnerInvoice * 0.025).toFixed(2);
-  const ucPartnerTotalFee = (partnerInvoice + partnerInvoice * 0.05).toFixed(2);
+  const ucPartnerTotalFee = (partnerInvoice + partnerInvoice * 0.025).toFixed(2);
 
-  // Item handlers
+  // Item Management
   const handleAddItem = () => setItems([...items, { item: "", quantity: "", price: "" }]);
   const handleRemoveItem = (index) => {
     const newItems = [...items];
@@ -62,24 +58,7 @@ const Repairs = () => {
     setItems(newItems);
   };
 
-  // Auto calculate totals
-  useEffect(() => {
-    const total = items.reduce((sum, item) => {
-      const quantity = Number(item.quantity || 0);
-      const price = Number(item.price || 0);
-      const baseAmount = quantity * price;
-      const gstAmount = baseAmount * 0.18;
-      return sum + baseAmount + gstAmount;
-    }, 0);
-    setFinalAmount(total);
-
-    const reducedValue = Number(reductions) || 0;
-    const afterReduction = total - reducedValue > 0 ? total - reducedValue : 0;
-    setNewFinalAmount(afterReduction);
-  }, [items, reductions]);
-
-
-  // Convert number to words
+  // Convert to Words
   const toWords = new ToWords({
     localeCode: "en-IN",
     converterOptions: { currency: true, ignoreDecimal: false },
@@ -89,10 +68,11 @@ const Repairs = () => {
     if (isNaN(num) || value === "" || value == null) return "";
     return toWords.convert(num);
   };
+
   const ucPlatformPriceInWords = convertToWords(ucPlatformPrice);
   const ucplucPlatformgstInWords = convertToWords(ucgstAmount);
 
-  // Random invoice generator
+  // Generate Random Invoice Number
   const generateInvoiceNo = () => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const randomLetter = () => letters[Math.floor(Math.random() * letters.length)];
@@ -101,12 +81,49 @@ const Repairs = () => {
     return letterPart + numberPart;
   };
 
-  {/*1st Bill */ }
+  const resetForm = () => {
+    setOpen(false);
+    setSelectedBill(null);
+    setName("");
+    setAddress("");
+    setucItem("");
+    setucPlatformPrice("");
+    setucPrice("");
+    setDueDate("");
+    setInterestAmount("");
+    setItems([{ item: "", quantity: "", price: "" }]);
+    setErrors({});
+  };
+
+  const validateUCBill = () => {
+    const newErrors = {};
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!address.trim()) newErrors.address = "Address is required";
+    if (!ucitem.trim()) newErrors.ucitem = "Item is required";
+    if (!ucPlatformPrice.trim()) newErrors.ucPlatformPrice = "Platform price is required";
+    if (!ucprice.trim()) newErrors.ucprice = "Item price is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePKBill = () => {
+    const newErrors = {};
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!address.trim()) newErrors.address = "Address is required";
+
+    items.forEach((item, i) => {
+      if (!item.item.trim()) newErrors[`item-${i}`] = "Item name required";
+      if (!item.quantity.trim()) newErrors[`quantity-${i}`] = "Quantity required";
+      if (!item.price.trim()) newErrors[`price-${i}`] = "Price required";
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // 1st Bill - Urban Company
   const handleCreateBill1 = async () => {
-    if (!ucitem || !ucprice || !ucPlatformPrice || !name || !address) {
-      setShowError(true);
-      return;
-    }
+    if (!validateUCBill()) return;
 
     const invoiceNumber1 = generateInvoiceNo();
     const invoiceNumber2 = generateInvoiceNo();
@@ -144,32 +161,14 @@ const Repairs = () => {
     link.click();
     URL.revokeObjectURL(url);
 
-    setOpen(false);
-    setSelectedBill(null);
-    setName("");
-    setucItem("");
-    setucPlatformPrice("");
-    setucPrice("");
-    setAddress("");
-    setDueDate("");
-    setShowError(false);
+    resetForm();
   };
 
-  {/*2nd Bill*/ }
+  // 🧾 2nd Bill - PK Repair
   const handleCreateBill2 = async () => {
-    if (!name || !address) {
-      setShowError(true);
-      return;
-    }
-
-    const hasEmptyFields = items.some((i) => !i.item || !i.quantity || !i.price);
-    if (hasEmptyFields) {
-      setShowError(true);
-      return;
-    }
+    if (!validatePKBill()) return;
 
     const invoiceNumber = generateInvoiceNo();
-    console.log("Generated invoice number:", invoiceNumber);
     const today = new Date();
     const currentDate = today.toLocaleDateString("en-US", {
       year: "numeric",
@@ -206,16 +205,7 @@ const Repairs = () => {
         grandTotal={grandTotal}
         finalAmountWithInterest={finalAmountWithInterest}
         amountInWords={convertToWords(finalAmountWithInterest)}
-        PKheadings={[
-          { name: "", width: "3%" },
-          { name: "Item", width: "35%" },
-          { name: "GST Rate", width: "7%" },
-          { name: "Quantity", width: "8%" },
-          { name: "Rate", width: "12%" },
-          { name: "Amount", width: "12%" },
-          { name: "GST", width: "13%" },
-          { name: "Total", width: "12%" },
-        ]}
+        PKheadings={HeaderTitles}
       />
     ).toBlob();
 
@@ -226,19 +216,7 @@ const Repairs = () => {
     link.click();
     URL.revokeObjectURL(url);
 
-    // Reset
-    setOpen(false);
-    setSelectedBill(null);
-    setName("");
-    setAddress("");
-    setInterestAmount("");
-    setItems([{ item: "", quantity: "", price: "" }]);
-    setShowError(false);
-  };
-
-  const handleModalOpen = (RepairBill) => {
-    setSelectedBill(RepairBill);
-    setOpen(true);
+    resetForm();
   };
 
   return (
@@ -248,7 +226,10 @@ const Repairs = () => {
           key={RepairBill.id}
           src={RepairBill.img}
           className="h-auto w-[250px] md:w-[300px] hover:scale-105 duration-300 cursor-pointer border border-black rounded-lg"
-          onClick={() => handleModalOpen(RepairBill)}
+          onClick={() => {
+            setSelectedBill(RepairBill);
+            setOpen(true);
+          }}
         />
       ))}
 
@@ -257,161 +238,57 @@ const Repairs = () => {
           <div className="bg-[#EDEDED] rounded-lg shadow-lg w-full sm:w-[600px] md:w-[700px] lg:w-[800px] relative p-6 sm:p-8 md:p-10 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center">
               <p className="text-xl sm:text-2xl font-semibold">Details</p>
-              <button
-                className="text-black text-2xl font-bold cursor-pointer"
-                onClick={() => setOpen(false)}
-              >
+              <button className="text-black text-2xl font-bold cursor-pointer" onClick={() => setOpen(false)}>
                 <RxCross1 />
               </button>
             </div>
 
-            {/* Bill 1 - Urban Company */}
+            {/* Urban Company Bill */}
             {selectedBill?.id === 1 && (
               <div className="flex flex-col gap-5 mt-4">
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-white w-full rounded-md"
-                />
-                <TextField
-                  label="Address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="bg-white w-full rounded-md"
-                />
-                <TextField
-                  label="Item"
-                  value={ucitem}
-                  onChange={(e) => setucItem(e.target.value)}
-                  className="bg-white w-full rounded-md"
-                />
+                <TextField label="Name" value={name} error={!!errors.name} helperText={errors.name} onChange={(e) => setName(e.target.value)} />
+                <TextField label="Address" value={address} error={!!errors.address} helperText={errors.address} onChange={(e) => setAddress(e.target.value)} />
+                <TextField label="Item" value={ucitem} error={!!errors.ucitem} helperText={errors.ucitem} onChange={(e) => setucItem(e.target.value)} />
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <TextField
-                    label="Platform Price"
-                    type="text"
-                    value={ucPlatformPrice}
-                    onChange={(e) =>
-                      setucPlatformPrice(e.target.value.replace(/[^0-9]/g, ""))
-                    }
-                    className="bg-white w-full sm:w-1/2 rounded-md"
-                  />
-                  <TextField
-                    label="Item Price"
-                    type="text"
-                    value={ucprice}
-                    onChange={(e) =>
-                      setucPrice(e.target.value.replace(/[^0-9]/g, ""))
-                    }
-                    className="bg-white w-full sm:w-1/2 rounded-md"
-                  />
+                  <TextField label="Platform Price" type="text" value={ucPlatformPrice} error={!!errors.ucPlatformPrice} helperText={errors.ucPlatformPrice} onChange={(e) => setucPlatformPrice(e.target.value.replace(/[^0-9]/g, ""))} />
+                  <TextField label="Item Price" type="text" value={ucprice} error={!!errors.ucprice} helperText={errors.ucprice} onChange={(e) => setucPrice(e.target.value.replace(/[^0-9]/g, ""))} />
                 </div>
-                <button
-                  onClick={handleCreateBill1}
-                  className="w-full bg-black text-white py-2 px-6 rounded mt-4 cursor-pointer hover:bg-gray-900"
-                >
+                <button onClick={handleCreateBill1} className="w-full bg-black text-white py-2 px-6 rounded mt-4 cursor-pointer hover:bg-gray-900">
                   Create Bill
                 </button>
               </div>
             )}
 
-
-            {/* Bill 2 - PK Supply */}
+            {/* PK Repair Bill */}
             {selectedBill?.id === 2 && (
               <div className="flex flex-col gap-5 mt-4">
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-white w-full rounded-md"
-                />
-                <div className="flex gap-3">
-                  <TextField
-                    label="Address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="bg-white w-full rounded-md"
-                  />
+                <TextField label="Name" value={name} error={!!errors.name} helperText={errors.name} onChange={(e) => setName(e.target.value)} />
+                <TextField label="Address" value={address} error={!!errors.address} helperText={errors.address} onChange={(e) => setAddress(e.target.value)} />
 
-                </div>
                 {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-3 border p-3 rounded-md bg-white"
-                  >
+                  <div key={index} className="flex flex-col gap-3 border p-3 rounded-md bg-white">
                     <div className="flex justify-between items-center">
-                      <p className="font-semibold text-base sm:text-lg">
-                        Item {index + 1}
-                      </p>
+                      <p className="font-semibold text-base sm:text-lg">Item {index + 1}</p>
                       {items.length > 1 && (
-                        <button
-                          className="text-red-500 text-sm font-medium cursor-pointer"
-                          onClick={() => handleRemoveItem(index)}
-                        >
+                        <button className="text-red-500 text-sm font-medium cursor-pointer" onClick={() => handleRemoveItem(index)}>
                           Remove
                         </button>
                       )}
                     </div>
-                    <TextField
-                      label="Item"
-                      value={item.item}
-                      onChange={(e) =>
-                        handleItemChange(index, "item", e.target.value)
-                      }
-                      className="bg-white w-full rounded-md"
-                    />
+                    <TextField label="Item" value={item.item} error={!!errors[`item-${index}`]} helperText={errors[`item-${index}`]} onChange={(e) => handleItemChange(index, "item", e.target.value)} />
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <TextField
-                        label="Quantity"
-                        type="text"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleItemChange(
-                            index,
-                            "quantity",
-                            e.target.value.replace(/[^0-9]/g, "")
-                          )
-                        }
-                        className="bg-white w-full sm:w-1/2 rounded-md"
-                      />
-                      <TextField
-                        label="Price"
-                        type="text"
-                        value={item.price}
-                        onChange={(e) =>
-                          handleItemChange(
-                            index,
-                            "price",
-                            e.target.value.replace(/[^0-9]/g, "")
-                          )
-                        }
-                        className="bg-white w-full sm:w-1/2 rounded-md"
-                      />
-                      <TextField
-                        label="GST (%)"
-                        type="price"
-                        value={item.gst || ""}
-                        onChange={(e) =>
-                          handleItemChange(
-                            index,
-                            "gst",
-                            e.target.value.replace(/[^0-9.]/g, "")
-                          )}
-                        className="bg-white w-full sm:w-1/3 rounded-md" />
+                      <TextField label="Quantity" value={item.quantity} error={!!errors[`quantity-${index}`]} helperText={errors[`quantity-${index}`]} onChange={(e) => handleItemChange(index, "quantity", e.target.value.replace(/[^0-9]/g, ""))} />
+                      <TextField label="Price" value={item.price} error={!!errors[`price-${index}`]} helperText={errors[`price-${index}`]} onChange={(e) => handleItemChange(index, "price", e.target.value.replace(/[^0-9]/g, ""))} />
+                      <TextField label="GST (%)" value={item.gst || ""} onChange={(e) => handleItemChange(index, "gst", e.target.value.replace(/[^0-9.]/g, ""))} />
                     </div>
                   </div>
                 ))}
-                <button
-                  onClick={handleAddItem}
-                  className="bg-gray-700 text-white py-2 px-4 rounded-md w-fit hover:bg-gray-800 cursor-pointer"
-                >
+
+                <button onClick={handleAddItem} className="bg-gray-700 text-white py-2 px-4 rounded-md w-fit hover:bg-gray-800 cursor-pointer">
                   + Add Item
                 </button>
 
-                <button
-                  onClick={handleCreateBill2}
-                  className="w-full bg-black text-white py-2 px-6 rounded mt-4 cursor-pointer hover:bg-gray-900"
-                >
+                <button onClick={handleCreateBill2} className="w-full bg-black text-white py-2 px-6 rounded mt-4 cursor-pointer hover:bg-gray-900">
                   Create Bill
                 </button>
               </div>

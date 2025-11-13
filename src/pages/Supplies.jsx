@@ -21,8 +21,6 @@ import Bill3 from "../assets/supplyBill3.jpg";
 import Bill4 from "../assets/supplyBill4.jpg";
 import Bill5 from "../assets/supplyBill5.jpg";
 import Bill6 from "../assets/supplyBill6.jpg";
-// import { Disc } from "lucide-react";
-// import { toast } from "react-toastify";
 
 const Supplies = () => {
   const [open, setOpen] = useState(false);
@@ -158,8 +156,12 @@ const Supplies = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
 
+
+    setName("");
+    setAddress("");
+    SetPhone("");
+  };
 
   // 2nd bill
   const handleCreateBill2 = async () => {
@@ -279,10 +281,6 @@ const Supplies = () => {
 
   };
 
-
-
-
-
   {/* 3rd bill */ }
   const handleCreateBill3 = async () => {
     const updatedItems = items.map((item) => {
@@ -338,8 +336,6 @@ const Supplies = () => {
     };
 
     const amountInWords = convertToWords(totalFinalAmount);
-    console.log("Generating PDF...");
-
     const blob = await pdf(
       <PkSuppliesbill
         HeaderTitles={[
@@ -387,7 +383,6 @@ const Supplies = () => {
     setPaymentDate("");
     setDueDate("");
   };
-
 
   {/*4th bill */ }
   const handleCreateBill4 = async () => {
@@ -515,7 +510,6 @@ const Supplies = () => {
     URL.revokeObjectURL(url);
   };
 
-
   {/*6th Bill*/ }
   const handleCreateBill6 = async () => {
 
@@ -582,7 +576,6 @@ const Supplies = () => {
   };
 
   const handleModalOpen = (bill) => {
-    console.log(bill);
     setSelectedBill(bill);
     setOpen(true);
   };

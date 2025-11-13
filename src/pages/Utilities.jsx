@@ -136,61 +136,92 @@ const Utilities = () => {
 
             {/*BILL 1 */}
             {selectedBill?.id === 1 && (
-              <div className="flex flex-col gap-5 mt-2">
-                <h2 className="text-xl font-semibold">Details</h2>
-                {["name", "totalAmount", "phone"].map((field, i) => (
-                  <div key={i}>
-                    <TextField
-                      label={
-                        field === "name"
-                          ? "Name"
-                          : field === "totalAmount"
-                            ? "Total Amount Paid"
-                            : "Phone"
-                      }
-                      value={formData[field]}
-                      onChange={(e) => {
-                        let value = e.target.value;
-                        if (field === "phone") {
-                          value = value.replace(/[^0-9]/g, "").slice(0, 10);
+              <div className="flex flex-col gap-6 mt-4 bg-white rounded-2xl shadow-md p-6 sm:p-8 transition-all duration-300">
+                {/* Header */}
+                <div className="text-center mb-2">
+                  <h2 className="text-2xl font-semibold text-gray-800">Urban Company Bill</h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Please enter customer details to generate the bill.
+                  </p>
+                </div>
+
+                {/* Input Fields */}
+                <div className="flex flex-col gap-5">
+                  {["name", "totalAmount", "phone"].map((field, i) => (
+                    <div key={i} className="flex flex-col">
+                      <TextField
+                        label={
+                          field === "name"
+                            ? "Customer Name"
+                            : field === "totalAmount"
+                              ? "Total Amount Paid"
+                              : "Phone Number"
                         }
-                        setFormData({ ...formData, [field]: value });
-                      }}
-                      fullWidth
-                      InputProps={{ className: "bg-white rounded-md" }}
-                    />
-                    {formData[field] === "" && showError && (
-                      <p className="text-sm text-red-500 mt-1">
-                        *This field is required.
-                      </p>
-                    )}
-                  </div>
-                ))}
-                <button
-                  onClick={handleCreateBill1}
-                  className="w-full bg-black text-white py-3 rounded-md mt-2 font-semibold hover:bg-gray-800 transition-all"
-                >
-                  Create Bill
-                </button>
+                        variant="outlined"
+                        fullWidth
+                        value={formData[field]}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          if (field === "phone") {
+                            value = value.replace(/[^0-9]/g, "").slice(0, 10);
+                          }
+                          setFormData({ ...formData, [field]: value });
+                        }}
+                        InputProps={{
+                          className:
+                            "bg-gray-50 rounded-lg focus-within:border-gray-700 focus-within:ring-1 focus-within:ring-gray-600 transition-all duration-200",
+                        }}
+                      />
+                      {formData[field] === "" && showError && (
+                        <p className="text-xs text-red-500 mt-1 italic">
+                          *This field is required.
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-gray-200 mt-2"></div>
+
+                {/* Submit Button */}
+                <div className="flex justify-center mt-2">
+                  <button
+                    onClick={handleCreateBill1}
+                    className="w-full sm:w-auto px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200"
+                  >
+                    Create Bill
+                  </button>
+                </div>
               </div>
             )}
 
 
+
             {/*2nd Bill */}
             {selectedBill?.id === 2 && (
-              <div className="flex flex-col gap-5 mt-2">
-                <div className="text-center text-gray-700">
-                  <h2 className="text-xl font-semibold">Details</h2>
+              <div className="flex flex-col gap-6 mt-4 bg-white rounded-2xl shadow-md p-6 sm:p-8 transition-all">
+                {/* Section Header */}
+                <div className="text-center">
+                  <h2 className="text-2xl font-semibold text-gray-800">Customer Details</h2>
+                  <p className="text-gray-500 text-sm mt-1">
+                    Please fill in the required information to generate your bill.
+                  </p>
+                </div>
+
+                {/* Input Fields */}
+                <div className="flex flex-col gap-5">
                   {["name", "totalAmount", "phone"].map((field, i) => (
                     <div key={i}>
                       <TextField
                         label={
                           field === "name"
-                            ? "Name"
+                            ? "Full Name"
                             : field === "totalAmount"
                               ? "Total Amount Paid"
-                              : "Phone"
+                              : "Phone Number"
                         }
+                        variant="outlined"
                         value={formData[field]}
                         onChange={(e) => {
                           let value = e.target.value;
@@ -200,35 +231,57 @@ const Utilities = () => {
                           setFormData({ ...formData, [field]: value });
                         }}
                         fullWidth
-                        InputProps={{ className: "bg-white rounded-md" }}
+                        InputProps={{
+                          className:
+                            "bg-gray-50 rounded-lg focus-within:border-gray-700 transition-all",
+                        }}
                       />
                       {formData[field] === "" && showError && (
-                        <p className="text-sm text-red-500 mt-1">
+                        <p className="text-xs text-red-500 mt-1 italic">
                           *This field is required.
                         </p>
                       )}
-
                     </div>
-
                   ))}
-                  <div className="flex gap-3">
+
+                  {/* Address Field */}
+                  <div>
                     <TextField
                       label="Address"
+                      multiline
+                      rows={3}
                       value={addres}
                       onChange={(e) => setAddres(e.target.value)}
-                      className="bg-white w-full rounded-md" />
-
+                      fullWidth
+                      variant="outlined"
+                      InputProps={{
+                        className:
+                          "bg-gray-50 rounded-lg focus-within:border-gray-700 transition-all",
+                      }}
+                    />
+                    {addres === "" && showError && (
+                      <p className="text-xs text-red-500 mt-1 italic">
+                        *Address is required.
+                      </p>
+                    )}
                   </div>
+                </div>
 
+                {/* Divider */}
+                <hr className="border-gray-200 my-2" />
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
                   <button
                     onClick={handleCreateBill2}
-                    className="w-full cursor-pointer bg-black text-white py-3 rounded-md mt-2 font-semibold hover:bg-gray-800 transition-all"
+                    className="w-full sm:w-auto px-6 py-3 bg-black text-white font-semibold rounded-lg shadow hover:bg-gray-800 transition-all duration-200"
                   >
                     Create Bill
                   </button>
                 </div>
               </div>
             )}
+
           </div>
         </div>
       )}
