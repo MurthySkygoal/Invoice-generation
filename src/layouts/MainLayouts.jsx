@@ -22,22 +22,23 @@ const MainLayouts = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="flex items-center justify-between bg-white shadow px-6 py-4">
-        <h1 className="text-xl font-bold">
-          {isAdmin ? "Admin Dashboard" : "User Dashboard"}
-        </h1>
+      <header className="bg-white py-6 px-4 shadow-md sticky top-0 z-50 space-y-5">
+        <div className="flex items-center justify-between px-4 md:px-6">
+          <h1 className="text-xl font-bold">
+            {isAdmin ? "Admin Dashboard" : "User Dashboard"}
+          </h1>
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer"
+            >
+              Logout
+            </button>
+          </div>
         </div>
+        <Navbar />
       </header>
-
-      <Navbar />
 
       <main className="flex-1 p-6">
         {!isAdmin && pathname === "/" ? <UnAuthorizedPage /> : <Outlet />}

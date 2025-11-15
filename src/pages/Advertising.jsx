@@ -71,7 +71,6 @@ const Advertising = () => {
             >
               <RxCross1 />
             </button>
-
             <div className="flex flex-col gap-5">
               <div className="w-full">
                 <TextField

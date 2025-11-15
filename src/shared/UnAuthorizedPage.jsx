@@ -18,7 +18,7 @@ export default function UnAuthorizedPage() {
                     You don't have permission to view this page.
                 </p>
                 <button
-                    onClick={() => navigate("/advertising")}
+                    onClick={() => navigate("/advertising",)}
                     className="bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition"
                 >
                     Go Back

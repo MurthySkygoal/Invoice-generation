@@ -1,17 +1,21 @@
 import React from "react";
-import { Page, Text, View, Document, StyleSheet, Image } from "@react-pdf/renderer";
+import { Page, Text, View, Document, StyleSheet, Image, Font } from "@react-pdf/renderer";
 import logo from "../assets/ActImg.png";
 import icon from "../assets/profileicon.png";
 import Banner from "../assets/Actbanner1.png";
 import Banner1 from "../assets/Actbanner2.png";
+import inter from "../fonts/Inter_18pt-Medium.ttf";
+Font.register({
+    family: "inter",
+    fonts: [{ src: inter, fontWeight: "200" }],
+});
 
-// Styles
 const styles = StyleSheet.create({
     page: {
         margin: 40,
         fontSize: 9,
-        fontFamily: "Helvetica",
         color: "#333",
+        fontFamily: "inter",
     },
     address: {
         marginBottom: 3,
@@ -20,7 +24,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "stretch",
-        gap: 6,
+        gap: 5,
         marginTop: 15,
     },
     paybox: {
@@ -85,7 +89,6 @@ const styles = StyleSheet.create({
     },
 
     sectionHeader: {
-        // width: "86.2%",
         backgroundColor: "#f5f5f5",
         padding: 8,
         marginBottom: 0,
@@ -98,18 +101,16 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     accountText: {
-        fontSize: 9,
+        fontSize: 8,
         color: "#333",
         textAlign: "right",
     },
     tableContainer: {
-        // width: "86.2%",
         borderStyle: "solid",
         borderWidth: 0.5,
         borderRightWidth: 0,
         borderBottomWidth: 0,
         marginLeft: 10,
-        // marginTop: 10
     },
     tableRow: {
         flexDirection: "row",
@@ -123,18 +124,33 @@ const styles = StyleSheet.create({
         borderTopWidth: 0,
         paddingVertical: 4,
         textAlign: "center",
-        // fontWeight: "bold",
+        fontSize: 8,
     },
+    tableColHeader1: {
+        backgroundColor: "#e53935",
+        color: "#fff",
+        borderStyle: "solid",
+        borderWidth: 0.5,
+        borderLeftWidth: 0,
+        borderTopWidth: 0,
+        paddingVertical: 10,
+        textAlign: "center",
+        fontSize: 8,
+    },
+
     tableCol: {
+        backgroundColor: "white",
         borderStyle: "solid",
         borderWidth: 0.5,
         borderLeftWidth: 0,
         borderTopWidth: 0,
         paddingVertical: 4,
         textAlign: "center",
+        fontSize: 8,
+
     },
     subtotalRow: {
-        // width: "86.2%",
+        backgroundColor: "white",
         flexDirection: "row",
         borderStyle: "solid",
         borderWidth: 0.5,
@@ -142,11 +158,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         marginBottom: 10,
-        // paddingBottom: 10,
-        // backgroundColor: "#f5f5f5",
     },
     subtotalText: {
-        // width: "86.2%",
         textAlign: "right",
         borderBottomRightRadius: 1,
         fontWeight: "bold",
@@ -154,7 +167,6 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     subtotalValue: {
-        // width: "86.2%",
         textAlign: "center",
         paddingVertical: 4,
         width: "25%",
@@ -170,7 +182,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#f5f5f5",
         padding: 8,
         marginBottom: 0,
-        flexDirection: "row",
         justifyContent: "space-between",
     },
     taxHeaderTitle: {
@@ -190,9 +201,11 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRightWidth: 0,
         borderBottomWidth: 0,
+        marginLeft: 10,
     },
     taxTableRow: {
         flexDirection: "row",
+        marginRight: 10,
     },
     taxHeaderCell: {
         backgroundColor: "#e53935",
@@ -206,6 +219,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     taxCell: {
+        backgroundColor: "white",
         borderStyle: "solid",
         borderWidth: 0.5,
         borderLeftWidth: 0,
@@ -222,23 +236,69 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         paddingVertical: 4,
     },
+    subtotalRow2: {
+        backgroundColor: "white",
+        flexDirection: "row",
+        borderStyle: "solid",
+        borderWidth: 0.5,
+        borderBottom: 0.5,
+        borderTopWidth: 0,
+        marginLeft: 10,
+        marginRight: 10,
+
+    },
+    TotalPayments: {
+        backgroundColor: "white",
+        flexDirection: "row",
+        borderStyle: "solid",
+        borderWidth: 0.5,
+        borderTopWidth: 0.5,
+        borderBottom: 0.5,
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom: 10,
+    },
+    subtotalText2: {
+        textAlign: "right",
+        fontWeight: "bold",
+        paddingVertical: 4,
+        borderRightWidth: 0.5,
+        borderStyle: "solid",
+        width: "100%",
+    },
+    subtotalValue2: {
+        textAlign: "center",
+        paddingVertical: 4,
+        width: "25%",
+    },
+    haedingTable: {
+        flexDirection: "row",
+        margin: 10,
+
+    },
+
+
 });
 
-// Main Document Component
 const ActWifi = ({
     name,
     addres,
     UserID,
     ActinvoiceNO,
     phone,
-    billingPeriod = "Nov, 2025",
-    invoiceDate = "01/11/2025",
-    dueDate = "10/11/2025",
-    totalAmount = 619.5,
-    amountAfterDueDate = 737.5,
-    taxable = 525,
-    cgst = 47.25,
-    sgst = 47.25,
+    BillingPeriod,
+    invoiceDate,
+    dueDate,
+    totalAmount,
+    afterDue,
+    TotalCharges,
+    gst,
+    cgst,
+    endDate,
+    startDate,
+    prevMonthDates,
+    id,
+    daysInMonth,
 }) => (
     <Document>
         <Page size="A4" style={styles.page}>
@@ -280,7 +340,7 @@ const ActWifi = ({
             <View style={styles.payrow}>
                 <View style={styles.paybox}>
                     <Text style={styles.boxHeader}>Billing Period</Text>
-                    <Text style={styles.boxValue}>{billingPeriod}</Text>
+                    <Text style={styles.boxValue}>{BillingPeriod}</Text>
                 </View>
                 <View style={styles.paybox}>
                     <Text style={styles.boxHeader}>Invoice Date</Text>
@@ -296,7 +356,7 @@ const ActWifi = ({
                 </View>
                 <View style={styles.paybox}>
                     <Text style={styles.boxHeader}>Amount After Due Date</Text>
-                    <Text style={styles.boxValue}>₹{amountAfterDueDate}</Text>
+                    <Text style={styles.boxValue}>₹{afterDue}</Text>
                 </View>
                 <View style={{ marginTop: 30 }}>
                     <Text style={styles.payButton}>PAY BILL</Text>
@@ -326,7 +386,7 @@ const ActWifi = ({
                     <View style={styles.divider} />
                     <View style={styles.lineItem}>
                         <Text style={styles.label}>Total Charges</Text>
-                        <Text style={styles.value}>₹{taxable}</Text>
+                        <Text style={styles.value}>₹{TotalCharges}</Text>
                     </View>
                     <View style={styles.lineItem}>
                         <Text style={styles.label}>CGST</Text>
@@ -334,7 +394,7 @@ const ActWifi = ({
                     </View>
                     <View style={styles.lineItem}>
                         <Text style={styles.label}>SGST</Text>
-                        <Text style={styles.value}>₹{sgst}</Text>
+                        <Text style={styles.value}>₹{cgst}</Text>
                     </View>
                     <View style={styles.divider} />
                     <View style={styles.lineItem}>
@@ -343,7 +403,6 @@ const ActWifi = ({
                     </View>
                 </View>
             </View>
-
 
             {/* Banner */}
             <Image src={Banner} style={{ marginTop: 10, width: "86.2%", height: 180, }} />
@@ -376,17 +435,17 @@ const ActWifi = ({
                     {/* Data Row */}
                     <View style={styles.tableRow}>
                         <Text style={[styles.tableCol, { width: "20%" }]}>A Max Loyalty 1M</Text>
-                        <Text style={[styles.tableCol, { width: "15%" }]}>01/11/2025</Text>
-                        <Text style={[styles.tableCol, { width: "15%" }]}>30/11/2025</Text>
-                        <Text style={[styles.tableCol, { width: "15%" }]}>30 days</Text>
-                        <Text style={[styles.tableCol, { width: "15%" }]}>525</Text>
-                        <Text style={[styles.tableCol, { width: "18%" }]}>525</Text>
+                        <Text style={[styles.tableCol, { width: "15%" }]}>{startDate}</Text>
+                        <Text style={[styles.tableCol, { width: "15%" }]}>{endDate}</Text>
+                        <Text style={[styles.tableCol, { width: "15%" }]}>{daysInMonth}days</Text>
+                        <Text style={[styles.tableCol, { width: "15%" }]}>{TotalCharges}</Text>
+                        <Text style={[styles.tableCol, { width: "18%" }]}>{TotalCharges}</Text>
                     </View>
                 </View>
 
                 <View style={styles.subtotalRow}>
                     <Text style={styles.subtotalText}>Sub Total:</Text>
-                    <Text style={styles.subtotalValue}>525</Text>
+                    <Text style={styles.subtotalValue}>{TotalCharges}</Text>
                 </View>
             </View>
 
@@ -395,71 +454,408 @@ const ActWifi = ({
         </Page >
         <Page size="A4" style={styles.page}>
 
-            <View style={styles.taxHeaderContainer}>
-                <Text style={styles.taxHeaderTitle}>Tax Details</Text>
-                <View>
-                    <Text style={styles.taxAccountInfo}>Account No: {UserID}</Text>
-                    <Text style={styles.taxAccountInfo}>User Name: {UserID}</Text>
+            <View
+                style={{
+                    backgroundColor: "#f5f5f5",
+                    width: "86.2%",
+                    marginBottom: 15,
+                }}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: 10,
+                        borderBottomWidth: 1,
+                        borderColor: "#ccc",
+                    }}
+                >
+                    <Text style={{ fontSize: 12, color: "#e53935", }}> Tax Details</Text>
+
+                    <View>
+                        <Text style={{ fontSize: 8 }}>Account No: {UserID}</Text>
+                        <Text style={{ fontSize: 8 }}>User Name: {UserID}</Text>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        width: "96.2%",
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        fontSize: 8,
+                        marginLeft: 10,
+                        marginBottom: 10,
+                    }}
+                >
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            borderBottomWidth: 1,
+                            borderColor: "#ccc",
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: "20%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                                Plan Name
+                            </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "15%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                                HSN Code
+                            </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "15%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                                Taxable Amount
+                            </Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center", padding: 4 }}>
+                                CGST
+                            </Text>
+
+                            <View style={{ flexDirection: "row" }}>
+                                <View
+                                    style={{
+                                        width: "50%",
+                                        padding: 4,
+                                        borderRightWidth: 1,
+                                        borderColor: "#ccc",
+                                    }}
+                                >
+                                    <Text style={{ color: "#fff", textAlign: "center" }}>Rate %</Text>
+                                </View>
+                                <View style={{ width: "50%", padding: 4 }}>
+                                    <Text style={{ color: "#fff", textAlign: "center" }}>Amount</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center", padding: 4 }}>
+                                SGST
+                            </Text>
+
+                            <View style={{ flexDirection: "row" }}>
+                                <View
+                                    style={{
+                                        width: "50%",
+                                        padding: 4,
+                                        borderRightWidth: 1,
+                                        borderColor: "#ccc",
+                                    }}
+                                >
+                                    <Text style={{ color: "#fff", textAlign: "center" }}>Rate %</Text>
+                                </View>
+                                <View style={{ width: "50%", padding: 4 }}>
+                                    <Text style={{ color: "#fff", textAlign: "center" }}>Amount</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "10%",
+                                padding: 6,
+                                backgroundColor: "#e53935",
+                            }}
+                        >
+                            <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                                Total Tax
+                            </Text>
+                        </View>
+                    </View>
+
+
+                    <View style={{ flexDirection: "row" }}>
+                        <View
+                            style={{
+                                width: "20%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>A Max Loyalty 1M</Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "15%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                textAlign: "center",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>998422</Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "15%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                textAlign: "center",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>{TotalCharges}</Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <View style={{ flexDirection: "row" }}>
+                                <View
+                                    style={{
+                                        width: "50%",
+                                        padding: 6,
+                                        borderRightWidth: 1,
+                                        borderColor: "#ccc",
+                                    }}
+                                >
+                                    <Text style={{ textAlign: "center" }}>9</Text>
+                                </View>
+                                <View style={{ width: "50%", padding: 6 }}>
+                                    <Text style={{ textAlign: "center" }}>{cgst}</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <View style={{ flexDirection: "row" }}>
+                                <View
+                                    style={{
+                                        width: "50%",
+                                        padding: 6,
+                                        borderRightWidth: 1,
+                                        borderColor: "#ccc",
+                                    }}
+                                >
+                                    <Text style={{ textAlign: "center" }}>9</Text>
+                                </View>
+                                <View style={{ width: "50%", padding: 6 }}>
+                                    <Text style={{ textAlign: "center" }}>{cgst}</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={{ width: "10%", padding: 6, backgroundColor: "#fff" }}>
+                            <Text style={{ textAlign: "center" }}>{gst}</Text>
+                        </View>
+                    </View>
+
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            borderTopWidth: 1,
+                            borderColor: "#ccc",
+                        }}
+                    >
+                        <View style={{ width: "20%", padding: 6, backgroundColor: "#fff" }}></View>
+                        <View style={{ width: "15%", padding: 6, backgroundColor: "#fff" }}></View>
+
+                        <View
+                            style={{
+                                width: "15%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>Sub Total:</Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                textAlign: "center",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>{cgst}</Text>
+                        </View>
+
+                        <View
+                            style={{
+                                width: "20%",
+                                padding: 6,
+                                borderRightWidth: 1,
+                                borderColor: "#ccc",
+                                textAlign: "center",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <Text>{cgst}</Text>
+                        </View>
+
+                        <View style={{ width: "10%", padding: 6, textAlign: "center", backgroundColor: "#fff" }}>
+                            <Text>{gst}</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
 
-            {/* Table Header */}
-            <View style={styles.taxTable}>
-                {/* Column Headings */}
-                <View style={styles.taxTableRow}>
-                    <Text style={[styles.taxHeaderCell, { width: "20%" }]}>Plan Name</Text>
-                    <Text style={[styles.taxHeaderCell, { width: "10%" }]}>HSN Code</Text>
-                    <Text style={[styles.taxHeaderCell, { width: "12%" }]}>Taxable Amount</Text>
 
-                    {/* CGST Group */}
-                    <View style={[styles.taxHeaderCell, { width: "20%", flexDirection: "row" }]}>
-                        <Text style={[styles.taxHeaderCell, { width: "50%" }]}>Rate %</Text>
-                        <Text style={[styles.taxHeaderCell, { width: "50%" }]}>Amount</Text>
-                    </View>
-
-                    {/* SGST Group */}
-                    <View style={[styles.taxHeaderCell, { width: "20%", flexDirection: "row" }]}>
-                        <Text style={[styles.taxHeaderCell, { width: "50%" }]}>Rate %</Text>
-                        <Text style={[styles.taxHeaderCell, { width: "50%" }]}>Amount</Text>
-                    </View>
-
-                    <Text style={[styles.taxHeaderCell, { width: "8%" }]}>Total Tax</Text>
-                </View>
-
-                {/* Data Row */}
-                <View style={styles.taxTableRow}>
-                    <Text style={[styles.taxCell, { width: "20%" }]}>A Max Loyalty 1M</Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}>998422</Text>
-                    <Text style={[styles.taxCell, { width: "12%" }]}>525</Text>
-
-                    {/* CGST */}
-                    <View style={[styles.taxCell, { width: "20%", flexDirection: "row" }]}>
-                        <Text style={[styles.taxCell, { width: "50%" }]}>9</Text>
-                        <Text style={[styles.taxCell, { width: "50%" }]}>47.25</Text>
-                    </View>
-
-                    {/* SGST */}
-                    <View style={[styles.taxCell, { width: "20%", flexDirection: "row" }]}>
-                        <Text style={[styles.taxCell, { width: "50%" }]}>9</Text>
-                        <Text style={[styles.taxCell, { width: "50%" }]}>47.25</Text>
-                    </View>
-
-                    <Text style={[styles.taxCell, { width: "8%" }]}>94.5</Text>
-                </View>
-
-                {/* Subtotal Row */}
-                <View style={styles.taxSubtotalRow}>
-                    <Text style={[styles.taxCell, { width: "20%" }]}>Sub Total:</Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}></Text>
-                    <Text style={[styles.taxCell, { width: "12%" }]}></Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}></Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}>47.25</Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}></Text>
-                    <Text style={[styles.taxCell, { width: "10%" }]}>47.25</Text>
-                    <Text style={[styles.taxCell, { width: "8%" }]}>94.5</Text>
+            <View style={{
+                width: "86.2%",
+                marginTop: 10,
+                marginBottom: 10,
+                backgroundColor: "#fafafa",
+            }}>
+                <View style={styles.haedingTable}>
+                    <Text style={[styles.tableColHeader1, { width: "38%" }]}>INVOICE AMOUNT:</Text>
+                    <Text style={[styles.tableColHeader1, { width: "12%" }]}>{TotalCharges}</Text>
+                    <Text style={[styles.tableColHeader1, { width: "20%" }]}>{cgst}</Text>
+                    <Text style={[styles.tableColHeader1, { width: "20%" }]}>{cgst}</Text>
+                    <Text style={[styles.tableColHeader1, { width: "10%" }]}>{totalAmount}</Text>
                 </View>
             </View>
-            <Image src={Banner1} style={{ marginTop: 10, width: "90%", height: 170, }} />
+
+
+
+            <View style={{
+                backgroundColor: "#f5f5f5",
+                width: "86.2%",
+            }}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Payments Received</Text>
+                    <View>
+                        <Text style={styles.accountText}>Account No: {UserID}</Text>
+                        <Text style={styles.accountText}>User Name: {UserID}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.tableContainer}>
+                    <View style={styles.tableRow}>
+                        <Text style={[styles.tableColHeader, { width: "15%" }]}>RefNo</Text>
+                        <Text style={[styles.tableColHeader, { width: "13%" }]}>Txn Date</Text>
+                        <Text style={[styles.tableColHeader, { width: "20%" }]}> Details</Text>
+                        <Text style={[styles.tableColHeader, { width: "10%" }]}>Amount</Text>
+                        <Text style={[styles.tableColHeader, { width: "10%" }]}>Total</Text>
+                        <Text style={[styles.tableColHeader, { width: "30%" }]}>Remarks</Text>
+                    </View>
+
+                    <View style={styles.tableRow}>
+                        <Text style={[styles.tableCol, { width: "15%" }]}>P1-{id}</Text>
+                        <Text style={[styles.tableCol, { width: "13%" }]}>{prevMonthDates}</Text>
+                        <Text style={[styles.tableCol, { width: "20%" }]}>Payment: Online Mode</Text>
+                        <Text style={[styles.tableCol, { width: "10%" }]}>{totalAmount}</Text>
+                        <Text style={[styles.tableCol, { width: "10%" }]}>{totalAmount}</Text>
+                        <Text style={[styles.tableCol, { width: "30%" }]}> PAYUPayment for subscriber - {UserID}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.subtotalRow2}>
+                    <Text style={[styles.subtotalText2, {
+                        width: "59.2%", borderRightColor: "gray", borderStyle: "solid",
+                    }]}>Payments :  </Text>
+                    <Text style={[styles.subtotalValue2, { width: "40%" }]}>{totalAmount}</Text>
+                </View>
+
+                <View style={styles.TotalPayments}>
+                    <Text style={styles.subtotalText2}>Total Payments :  </Text>
+                    <Text style={styles.subtotalValue2}>{totalAmount}</Text>
+                </View>
+            </View>
+
+            <View style={{
+                marginTop: 10,
+                borderWidth: 1,
+                borderColor: "gray",
+                borderStyle: "solid",
+                width: "86.2%",
+            }}>
+                <View style={{ borderBottom: 1, borderBottomColor: "gray", }}>
+                    <Text style={{ marginBottom: 10, marginTop: 10, marginLeft: 10, fontWeight: "bold", color: "gray", fontSize: 12, }}> Terms and Conditions</Text>
+                </View>
+                <View style={{ marginLeft: 10, marginTop: 15, marginBottom: 15, }}>
+                    <Text> 1. 18% interest will be levied on overdue payments.</Text>
+                    <Text>2. Late Payment fee of Rs. 100/- (+ GST) shall be applicable if bill is paid post due date.</Text>
+                    <Text> 3. In case of overdue/ defaults, the right to deactivate your services, is reserved.</Text>
+                    <Text>4. All disputes are subject to Telangana jurisdiction.</Text>
+                    <Text> 5. Unless otherwise stated,tax on this invoice is not payable under reverse charge.</Text>
+                    <Text> 6. This Invoice is system generated hence signature and stamp is not required.</Text>
+                </View>
+            </View>
+            <Image src={Banner1} style={{ marginTop: 10, width: "86.2%", height: 170, }} />
+
+            <View style={{
+                backgroundColor: "#e53935",
+                color: "#fff",
+                fontSize: 8,
+                width: "86.2%",
+                marginTop: 15, paddingVertical: 20
+            }}>
+                <Text style={{ textAlign: "center", marginBottom: 3, }}>
+                    Registered office address: No. 1, 2nd and 3rd Floor, Indian Express Building, Queens Road, Bangalore - 560001.
+                </Text>
+                <Text style={{ textAlign: "center", marginBottom: 3, }}>
+                    CIN no: U72900KA2000PLC027290 Tel: 08042884288 Fax no: 080-42884200
+                </Text>
+            </View>
         </Page>
     </Document >
 );

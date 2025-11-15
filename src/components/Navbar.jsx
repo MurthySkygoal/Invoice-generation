@@ -21,11 +21,11 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white py-6 px-4 shadow-md sticky top-0 z-50">
+    <nav>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
 
         <button
-          className="md:hidden text-2xl text-gray-800"
+          className="md:hidden text-2xl text-gray-800 ml-4"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <RxCross1 /> : <RxHamburgerMenu />}

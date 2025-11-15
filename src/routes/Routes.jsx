@@ -2,19 +2,20 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import MainLayouts from "../layouts/MainLayouts";
 import NotAuthorized from "../pages/NotAuthorized";
-import Login from "../pages/Login";
-import EazyRefund from "../pages/EazyRefund";
-import Advertising from "../pages/Advertising";
-import AutoTravels from "../pages/Auto&Travels";
-import CleaningMaintainance from "../pages/Cleaning&Maintenance";
-import ManagementFees from "../pages/ManagementFees";
-import Repairs from "../pages/Repairs";
-import Supplies from "../pages/Supplies";
-import Utilities from "../pages/Utilities";
-import LandScapings from "../pages/LandScapings";
-import ActivityLog from "../pages/ActivityLog";
-import GuestRegistrationForm from "../pages/GuestRegistrationForm";
 import { ProtectedRoute, PublicRoute } from "../components/ProtectedRoute";
+
+const EazyRefund = React.lazy(() => import("../pages/EazyRefund"));
+const Advertising = React.lazy(() => import("../pages/Advertising"));
+const AutoTravels = React.lazy(() => import("../pages/Auto&Travels"));
+const CleaningMaintainance = React.lazy(() => import("../pages/Cleaning&Maintenance"));
+const ManagementFees = React.lazy(() => import("../pages/ManagementFees"));
+const Repairs = React.lazy(() => import("../pages/Repairs"));
+const Supplies = React.lazy(() => import("../pages/Supplies"));
+const Utilities = React.lazy(() => import("../pages/Utilities"));
+const LandScapings = React.lazy(() => import("../pages/LandScapings"));
+const ActivityLog = React.lazy(() => import("../pages/ActivityLog"));
+const GuestRegistrationForm = React.lazy(() => import("../pages/GuestRegistrationForm"));
+const Login = React.lazy(() => import("../pages/Login"));
 
 export const routes = createBrowserRouter([
   {

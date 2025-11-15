@@ -3,6 +3,11 @@ import { pdf } from "@react-pdf/renderer";
 import UtilitiesBill from "../assets/Utilities.jpg";
 import Wifi from "../assets/Act.png";
 import { RxCross1 } from "react-icons/rx";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers";
+import { addDays } from "date-fns";
+import { subMonths, startOfMonth, endOfMonth, format, getDaysInMonth } from "date-fns";
 import TextField from "@mui/material/TextField";
 import UtilitiesBillDocument from "../components/UtilitiesBillDocument";
 import ActWifiBill from "../components/ActWifi";
@@ -14,18 +19,81 @@ const Utilities = () => {
     totalAmount: "1000",
     phone: "9999999999",
   });
+
+
   const [addres, setAddres] = useState("kphb, housingbard, hyderabad, telangana, pin-500072")
   const [showError, setShowError] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
+  const [invoiceDate, setinvoiceDate] = useState(null);
+  const [BillingPeriod, setBillingPeriod] = useState("")
+  const [formattedInvoiceDate, setFormattedInvoiceDate] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [daysInMonth, setDaysInMonth] = useState(0);
+  const [prevMonthDates, setPrevMonthDates] = useState([]);
 
   const images = [
     { id: 1, image: UtilitiesBill },
     { id: 2, image: Wifi },
   ];
 
+  function getRandomPrevMonthDate(date) {
+    const prevMonth = subMonths(date, 1);
+    const firstDate = startOfMonth(prevMonth);
+
+    const randomDay = Math.floor(Math.random() * 10) + 1;
+
+    const randomDate = new Date(firstDate);
+    randomDate.setDate(randomDay);
+
+    return format(randomDate, "dd, MMM, yyyy");
+  }
+
+
+  const handleDateChange = (newValue) => {
+    setinvoiceDate(newValue);
+
+    if (newValue) {
+      setFormattedInvoiceDate(format(newValue, "dd, MMM, yyyy"));
+      setBillingPeriod(format(newValue, "MMM yyyy"));
+
+      const tenDaysLater = addDays(newValue, 10);
+      setDueDate(format(tenDaysLater, "dd, MMM, yyyy"));
+
+      const start = startOfMonth(newValue);
+      const end = endOfMonth(newValue);
+
+      setStartDate(format(start, "dd, MMM, yyyy"));
+      setEndDate(format(end, "dd, MMM, yyyy"));
+
+      const days = getDaysInMonth(newValue);
+      setDaysInMonth(days);
+
+      const prevDates = getRandomPrevMonthDate(newValue);
+      setPrevMonthDates(prevDates);
+    }
+  };
+
   const randomNumber = () => Math.floor(1e10 + Math.random() * 9e10).toString();
   const UserID = () => Math.floor(1e10 + Math.random() * 9e11).toString();
   const ActinvoiceNO = () => Math.floor(100000000 + Math.random() * 999999999);
+  const id = () => Math.floor(99999999 + Math.random() * 99999999);
+
+
+  const totalAmountNum = Number(formData.totalAmount);
+  const amountAfterDueDate = totalAmountNum * 0.19;
+  const afterDue = totalAmountNum + amountAfterDueDate;
+  const gst = totalAmountNum * 0.18;
+  const TotalCharges = totalAmountNum - gst;
+  const cgst = gst / 2;
+
+  // function generateIdSimple(prefix = "P1", digits = 8) {
+  //   const max = 10 ** digits;
+  //   const num = Math.floor(Math.random() * max).toString().padStart(digits, "0");
+  //   return `${prefix}-${num}`;
+  // }
+
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
@@ -66,6 +134,8 @@ const Utilities = () => {
     setSelectedBill(null);
   };
 
+  {/*2nd Bill */ }
+
   const handleCreateBill2 = async () => {
     const { name, totalAmount, phone } = formData;
     if (!name || !totalAmount || !phone) {
@@ -79,6 +149,18 @@ const Utilities = () => {
         totalAmount={totalAmount}
         phone={phone}
         addres={addres}
+        invoiceDate={formattedInvoiceDate}
+        BillingPeriod={BillingPeriod}
+        dueDate={dueDate}
+        afterDue={afterDue}
+        TotalCharges={TotalCharges}
+        gst={gst}
+        cgst={cgst}
+        startDate={startDate}
+        endDate={endDate}
+        daysInMonth={daysInMonth}
+        id={id()}
+        prevMonthDates={prevMonthDates}
         UserID={UserID()}
         ActinvoiceNO={ActinvoiceNO()}
       />
@@ -96,6 +178,7 @@ const Utilities = () => {
     setOpen(false);
     setShowError(false);
     setAddres("");
+    setinvoiceDate("");
     setSelectedBill(null);
 
   };
@@ -265,6 +348,22 @@ const Utilities = () => {
                       </p>
                     )}
                   </div>
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Due Date"
+                      value={invoiceDate}
+                      onChange={handleDateChange}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          sx: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                          },
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
                 </div>
 
                 {/* Divider */}
