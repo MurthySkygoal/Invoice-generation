@@ -1,10 +1,10 @@
 providers = ["node"]
- 
+
 [variables]
 NODE_VERSION = "20"
- 
+
 [phases.build]
-cmds = ["npm install", "npm run build"]
- 
+cmds = ["npm ci", "npm run build"]
+
 [start]
 cmd = "npm run preview"

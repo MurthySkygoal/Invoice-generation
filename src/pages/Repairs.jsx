@@ -5,8 +5,8 @@ import { RxCross1 } from "react-icons/rx";
 import { pdf } from "@react-pdf/renderer";
 import { ToWords } from "to-words";
 import TextField from "@mui/material/TextField";
-import UrbanCompanyRepairBill from "../components/UrbanCompanyRepairBill";
 import PKsupply from "../components/PKrepairBill";
+import UrbanCompanyRepairBill from "../components/UrbanCompanyRepairBill.jsx";
 
 const Repairs = () => {
   const [open, setOpen] = useState(false);
